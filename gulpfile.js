@@ -484,6 +484,16 @@ gulp.task('buildnumber', function (done) {
   });
 });
 
+
+gulp.task('buildnumber-custom', function (done) {
+  console.log();
+  console.log('### Getting custom build number');
+
+  gulp.src('./version.json')
+    .pipe(gulp.dest(BUILD_DIR))
+    .on('end', done);
+});
+
 gulp.task('locale', function () {
   var VIEWER_LOCALE_OUTPUT = 'web/locale/';
   var METADATA_OUTPUT = 'extensions/firefox/';
@@ -577,7 +587,7 @@ gulp.task('cmaps', function (done) {
   done();
 });
 
-gulp.task('bundle', gulp.series('buildnumber', function () {
+gulp.task('bundle', gulp.series('buildnumber-custom', function () {
   return createBundle(DEFINES).pipe(gulp.dest(BUILD_DIR));
 }));
 
@@ -608,7 +618,7 @@ function preprocessHTML(source, defines) {
 
 // Builds the generic production viewer that should be compatible with most
 // modern HTML5 browsers.
-gulp.task('generic', gulp.series('buildnumber', 'locale', function () {
+gulp.task('generic', gulp.series('buildnumber-custom', 'locale', function () {
   console.log();
   console.log('### Creating generic viewer');
   var defines = builder.merge(DEFINES, { GENERIC: true, });
@@ -639,7 +649,7 @@ gulp.task('generic', gulp.series('buildnumber', 'locale', function () {
   ]);
 }));
 
-gulp.task('components', gulp.series('buildnumber', function () {
+gulp.task('components', gulp.series('buildnumber-custom', function () {
   console.log();
   console.log('### Creating generic components');
   var defines = builder.merge(DEFINES, { COMPONENTS: true, GENERIC: true, });
@@ -662,7 +672,7 @@ gulp.task('components', gulp.series('buildnumber', function () {
   ]);
 }));
 
-gulp.task('image_decoders', gulp.series('buildnumber', function() {
+gulp.task('image_decoders', gulp.series('buildnumber-custom', function() {
   console.log();
   console.log('### Creating image decoders');
   var defines = builder.merge(DEFINES, { GENERIC: true,
@@ -671,7 +681,7 @@ gulp.task('image_decoders', gulp.series('buildnumber', function() {
   return createImageDecodersBundle(defines).pipe(gulp.dest(IMAGE_DECODERS_DIR));
 }));
 
-gulp.task('minified-pre', gulp.series('buildnumber', 'locale', function () {
+gulp.task('minified-pre', gulp.series('buildnumber-custom', 'locale', function () {
   console.log();
   console.log('### Creating minified viewer');
   var defines = builder.merge(DEFINES, { MINIFIED: true, GENERIC: true, });
@@ -766,7 +776,7 @@ function preprocessDefaultPreferences(content) {
           content + '\n');
 }
 
-gulp.task('mozcentral-pre', gulp.series('buildnumber', 'locale', function () {
+gulp.task('mozcentral-pre', gulp.series('buildnumber-custom', 'locale', function () {
   console.log();
   console.log('### Building mozilla-central extension');
   var defines = builder.merge(DEFINES, { MOZCENTRAL: true, SKIP_BABEL: true, });
@@ -816,7 +826,7 @@ gulp.task('mozcentral-pre', gulp.series('buildnumber', 'locale', function () {
 
 gulp.task('mozcentral', gulp.series('mozcentral-pre'));
 
-gulp.task('chromium-pre', gulp.series('buildnumber', 'locale', function () {
+gulp.task('chromium-pre', gulp.series('buildnumber-custom', 'locale', function () {
   console.log();
   console.log('### Building Chromium extension');
   var defines = builder.merge(DEFINES, { CHROME: true, });
@@ -883,7 +893,7 @@ gulp.task('jsdoc', function (done) {
   });
 });
 
-gulp.task('lib', gulp.series('buildnumber', function () {
+gulp.task('lib', gulp.series('buildnumber-custom', function () {
   // When we create a bundle, webpack is run on the source and it will replace
   // require with __webpack_require__. When we want to use the real require,
   // __non_webpack_require__ has to be used.
